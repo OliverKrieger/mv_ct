@@ -8,7 +8,12 @@
 			"Name": "MV_CodingTest",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		}
+		},
+		{
+			"Name": "MV_CT_Core",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
 	],
 	"Plugins": [
 		{
