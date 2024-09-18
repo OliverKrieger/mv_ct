@@ -12,8 +12,11 @@
 		{
 			"Name": "MV_CT_Core",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
 	],
 	"Plugins": [
 		{
