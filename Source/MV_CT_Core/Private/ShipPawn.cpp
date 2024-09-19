@@ -11,20 +11,19 @@ AShipPawn::AShipPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SceneRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRootComponent"));
-	RootComponent = SceneRootComponent;
+	ShipCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ShipCollider"));
+	ShipCollider->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f));
+	ShipCollider->SetCollisionProfileName(TEXT("Pawn"));
+	RootComponent = ShipCollider;
+	MoveableComponent = ShipCollider;
 
 	ShipMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShipMesh"));
 	ShipMesh->SetupAttachment(RootComponent);
 
-	ShipCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ShipCollider"));
-	ShipCollider->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f));
-	ShipCollider->SetCollisionProfileName(TEXT("Pawn"));
-	ShipCollider->SetupAttachment(ShipMesh);
-
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(ShipMesh);
-	SpringArm->TargetArmLength = 400.0f;
+	SpringArm->TargetArmLength = 16000.0f;
+	SpringArm->SocketOffset = FVector(0, 0, 5200.0f);
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->CameraLagSpeed = 3.0f;
 
@@ -32,12 +31,16 @@ AShipPawn::AShipPawn()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
-	ThrustPower = 1000.f;
-	TurnRate = 50.f;
-
+	// Ship weight recognised as 2487627kg
+	// Movement suggested as following
+	MoveableComponent->SetSimulatePhysics(true);
+	ThrustPower = 5000000.f;
+	TurnRate = 5000000.f;
+	MoveableComponent->SetLinearDamping(0.3f);
+	MoveableComponent->SetAngularDamping(1.0f);
+	MoveableComponent->SetEnableGravity(true);
 }
 
-// Called when the game starts or when spawned
 void AShipPawn::BeginPlay()
 {
 	Super::BeginPlay();
@@ -56,14 +59,12 @@ void AShipPawn::BeginPlay()
 	
 }
 
-// Called every frame
 void AShipPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -75,30 +76,26 @@ void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
-// Function to move the pawn forward
 void AShipPawn::MoveForward(const FInputActionValue& Value)
 {
 	float MoveValue = Value.Get<float>();
-	UE_LOG(MV_CoreLogCategory, Log, TEXT("MoveForward Called"));
 
 	if (MoveValue != 0.0f)
 	{
 		UE_LOG(MV_CoreLogCategory, Log, TEXT("Trusting"));
 		FVector Force = GetActorForwardVector() * MoveValue * ThrustPower;
-		ShipMesh->AddForce(Force);
+		MoveableComponent->AddForce(Force);
 	}
 }
 
-// Function to turn the pawn
 void AShipPawn::Turn(const FInputActionValue& Value)
 {
 	float MoveValue = Value.Get<float>();
-	UE_LOG(MV_CoreLogCategory, Log, TEXT("Turn Called"));
 
 	if (MoveValue != 0.0f)
 	{
 		UE_LOG(MV_CoreLogCategory, Log, TEXT("Turning"));
-		FRotator Rotation = FRotator(0.f, MoveValue * TurnRate, 0.f);
-		ShipMesh->AddTorqueInRadians(Rotation.Vector() * 1000.f);
+		FVector TurnValue = FVector(0.f, 0.f, MoveValue * TurnRate);
+		MoveableComponent->AddTorqueInRadians(TurnValue);
 	}
 }

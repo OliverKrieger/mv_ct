@@ -11,6 +11,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -38,11 +39,17 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
     TObjectPtr<UInputAction> MoveRightInputAction;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    USceneComponent* SceneRootComponent;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UBoxComponent* ShipCollider;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UStaticMeshComponent* ShipMesh;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UCameraComponent* Camera;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    USpringArmComponent* SpringArm;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
     float ThrustPower;
@@ -59,17 +66,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:    
-
-    UPROPERTY(VisibleAnywhere, Category = "Components")
-    UStaticMeshComponent* ShipMesh;
-
-    UPROPERTY(VisibleAnywhere, Category = "Components")
-    UCameraComponent* Camera;
-
-    UPROPERTY(VisibleAnywhere, Category = "Components")
-    USpringArmComponent* SpringArm;
-
     void MoveForward(const FInputActionValue& Value);
     void Turn(const FInputActionValue& Value);
 
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UPrimitiveComponent* MoveableComponent;
 };
