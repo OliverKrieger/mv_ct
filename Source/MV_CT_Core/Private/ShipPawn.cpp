@@ -36,6 +36,7 @@ AShipPawn::AShipPawn()
 	MoveableComponent->SetSimulatePhysics(true);
 	ThrustPower = 5000000.f;
 	TurnRate = 5000000.f;
+	GravityScale = 2.0f;
 	MoveableComponent->SetLinearDamping(0.3f);
 	MoveableComponent->SetAngularDamping(1.0f);
 	MoveableComponent->SetEnableGravity(true);
@@ -63,6 +64,7 @@ void AShipPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	ApplyGravity();
 }
 
 void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -98,4 +100,25 @@ void AShipPawn::Turn(const FInputActionValue& Value)
 		FVector TurnValue = FVector(0.f, 0.f, MoveValue * TurnRate);
 		MoveableComponent->AddTorqueInRadians(TurnValue);
 	}
+}
+
+void AShipPawn::ApplyGravity() {
+	if (IsInAir()) {
+		float Mass = MoveableComponent->GetMass();
+		FVector GravityForce = FVector(0.f, 0.f, -980.f * Mass * GravityScale);
+		MoveableComponent->AddForce(GravityForce);
+	}
+}
+
+bool AShipPawn::IsInAir() const
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start - FVector(0.f, 0.f, 200.f);
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
+
+	return !bHit;
 }

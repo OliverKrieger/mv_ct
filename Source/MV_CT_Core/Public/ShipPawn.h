@@ -57,6 +57,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
     float TurnRate;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    float GravityScale;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -68,6 +71,8 @@ public:
 private:    
     void MoveForward(const FInputActionValue& Value);
     void Turn(const FInputActionValue& Value);
+    void ApplyGravity();
+    bool IsInAir() const;
 
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UPrimitiveComponent* MoveableComponent;
