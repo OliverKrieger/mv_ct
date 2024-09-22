@@ -40,6 +40,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Timing")
 	float TimerDuration;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Reload")
 	bool bHasFinished = false;
 
 protected:
