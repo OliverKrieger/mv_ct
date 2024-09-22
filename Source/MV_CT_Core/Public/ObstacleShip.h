@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
 	float MovementSpeed = 1000.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline")
+	bool FollowSpline = true;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

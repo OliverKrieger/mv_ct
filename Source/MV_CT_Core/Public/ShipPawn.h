@@ -20,6 +20,9 @@
 
 #include "Camera/CameraComponent.h"
 
+#include "OceanBody.h"
+#include "ObstacleShip.h"
+
 #include "ShipPawn.generated.h"
 
 UCLASS()
@@ -30,6 +33,7 @@ class MV_CT_CORE_API AShipPawn : public APawn
 public:
 	AShipPawn();
 
+    // INPUT ACTIONS
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
     TObjectPtr<UInputMappingContext> InputMappingContext;
 
@@ -39,6 +43,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
     TObjectPtr<UInputAction> MoveRightInputAction;
 
+    // COMPONENTS
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UBoxComponent* ShipCollider;
 
@@ -51,14 +56,42 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USpringArmComponent* SpringArm;
 
+    // Manual Movement Params
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-    float ThrustPower;
+    float ThrottlePower = 2.5f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-    float TurnRate;
+    float TurnRate = 2.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-    float GravityScale;
+    float MaxThrottlePower = 2033.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    float MaxTurnRate = 20.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    float GravityForce = 980.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    float LinearDampening = 1.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    float AngularDampening = 1.0f;
+
+    // Manual Size Params
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat Size")
+    float ShipMass = 145.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat Size")
+    float BoatLength = 500.f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat Size")
+    float BoatWidth = 300.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat Size")
+    float BoatHeight = 200.f;
+
+    AOceanBody* Ocean;
 
 protected:
 	virtual void BeginPlay() override;
@@ -68,11 +101,36 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    UFUNCTION()
+    void OnPawnCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 private:    
-    void MoveForward(const FInputActionValue& Value);
-    void Turn(const FInputActionValue& Value);
-    void ApplyGravity();
-    bool IsInAir() const;
+    // inputs
+    void TriggerForwardInput(const FInputActionValue& Value);
+    void TriggerTurnInput(const FInputActionValue& Value);
+    void ReleaseForwardInput(const FInputActionValue& Value);
+    void ReleaseTurnInput(const FInputActionValue& Value);
+    
+    // movement
+    void UpdateForwardMovement();
+    void UpdateTurningMovement();
+    void UpdateMovement();
+
+    // linetrace checks
+    bool IsInAir();
+    bool isSubmerged();
+
+    float Delta;
+
+    float LinearVelocity = 0.0f;
+    float AngularVelocity = 0.0f;
+    float VerticalVelocity = 0.0f;
+    
+    float PreviousFowardSpeed = 0.0f;
+    float PreviousTurnSpeed = 0.0f;
+    
+    float ThrottleInput = 0.0f;
+    float SteeringInput = 0.0f;
 
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UPrimitiveComponent* MoveableComponent;
