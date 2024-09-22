@@ -120,10 +120,20 @@ void AShipPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AShipPawn::OnPawnCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor->IsA(AObstacleShip::StaticClass()))
+	// handles linear velocity on collision
+	if (OtherActor->IsA(AObstacleShip::StaticClass()) || OtherActor->IsA(AIsland::StaticClass()))
 	{
 		UE_LOG(MV_CoreLogCategory, Log, TEXT("Collided with Obstacle Ship!"));
-		LinearVelocity = -LinearVelocity;
+
+		FVector HitNormal = Hit.ImpactNormal;
+		FVector ShipForwardVector = GetActorForwardVector();
+
+		HitNormal.Normalize();
+		ShipForwardVector.Normalize();
+
+		float HitAngle = FMath::Abs(FVector::DotProduct(ShipForwardVector, HitNormal));
+
+		LinearVelocity = -LinearVelocity * HitAngle;
 	}
 }
 
@@ -166,7 +176,7 @@ void AShipPawn::UpdateForwardMovement()
 	}
 
 	if (PreviousFowardSpeed != LinearVelocity) { // so we do not needlessly perform the calculations
-		UE_LOG(MV_CoreLogCategory, Log, TEXT("Throttle Input: %f | Forward Speed: %f"), ThrottleInput, LinearVelocity);
+		//UE_LOG(MV_CoreLogCategory, Log, TEXT("Throttle Input: %f | Forward Speed: %f"), ThrottleInput, LinearVelocity);
 		FVector ForwardVector = GetActorForwardVector();
 		FVector Movement = ForwardVector * LinearVelocity * Delta;
 		AddActorWorldOffset(Movement, true);
@@ -185,7 +195,7 @@ void AShipPawn::UpdateTurningMovement()
 	}
 
 	if (PreviousTurnSpeed != AngularVelocity) {
-		UE_LOG(MV_CoreLogCategory, Log, TEXT("Steering Input: %f | Rotation Amount: %f"), SteeringInput, AngularVelocity);
+		//UE_LOG(MV_CoreLogCategory, Log, TEXT("Steering Input: %f | Rotation Amount: %f"), SteeringInput, AngularVelocity);
 		float RotationAmount = AngularVelocity * Delta;
 		FRotator YawRotation = FRotator(0.0f, RotationAmount, 0.0f);
 		AddActorWorldRotation(YawRotation);

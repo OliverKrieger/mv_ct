@@ -22,6 +22,7 @@
 
 #include "OceanBody.h"
 #include "ObstacleShip.h"
+#include "Island.h"
 
 #include "ShipPawn.generated.h"
 
