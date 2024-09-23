@@ -123,7 +123,7 @@ void AShipPawn::OnPawnCollision(UPrimitiveComponent* HitComponent, AActor* Other
 	// handles linear velocity on collision
 	if (OtherActor->IsA(AObstacleShip::StaticClass()) || OtherActor->IsA(AIsland::StaticClass()))
 	{
-		UE_LOG(MV_CoreLogCategory, Log, TEXT("Collided with Obstacle Ship!"));
+		UE_LOG(MV_CoreLogCategory, Log, TEXT("Collided with Obstacle!"));
 
 		FVector HitNormal = Hit.ImpactNormal;
 		FVector ShipForwardVector = GetActorForwardVector();
