@@ -127,9 +127,6 @@ private:
     float AngularVelocity = 0.0f;
     float VerticalVelocity = 0.0f;
     
-    float PreviousFowardSpeed = 0.0f;
-    float PreviousTurnSpeed = 0.0f;
-    
     float ThrottleInput = 0.0f;
     float SteeringInput = 0.0f;
 

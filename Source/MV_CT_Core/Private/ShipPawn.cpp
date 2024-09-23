@@ -175,12 +175,11 @@ void AShipPawn::UpdateForwardMovement()
 		LinearVelocity = FMath::FInterpTo(LinearVelocity, 0.0f, Delta, LinearDampening);
 	}
 
-	if (PreviousFowardSpeed != LinearVelocity) { // so we do not needlessly perform the calculations
+	if (LinearVelocity != 0.0f) { // so we do not needlessly perform the calculations
 		//UE_LOG(MV_CoreLogCategory, Log, TEXT("Throttle Input: %f | Forward Speed: %f"), ThrottleInput, LinearVelocity);
 		FVector ForwardVector = GetActorForwardVector();
 		FVector Movement = ForwardVector * LinearVelocity * Delta;
 		AddActorWorldOffset(Movement, true);
-		PreviousFowardSpeed = LinearVelocity;
 	}
 }
 
@@ -194,12 +193,11 @@ void AShipPawn::UpdateTurningMovement()
 		AngularVelocity = FMath::FInterpTo(AngularVelocity, 0.0f, Delta, AngularDampening);
 	}
 
-	if (PreviousTurnSpeed != AngularVelocity) {
+	if (AngularVelocity != 0.0f) {
 		//UE_LOG(MV_CoreLogCategory, Log, TEXT("Steering Input: %f | Rotation Amount: %f"), SteeringInput, AngularVelocity);
 		float RotationAmount = AngularVelocity * Delta;
 		FRotator YawRotation = FRotator(0.0f, RotationAmount, 0.0f);
 		AddActorWorldRotation(YawRotation);
-		PreviousTurnSpeed = AngularVelocity;
 	}
 }
 
