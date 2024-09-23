@@ -117,10 +117,6 @@ private:
     void UpdateTurningMovement();
     void UpdateMovement();
 
-    // linetrace checks
-    bool IsInAir();
-    bool isSubmerged();
-
     float Delta;
 
     float LinearVelocity = 0.0f;
