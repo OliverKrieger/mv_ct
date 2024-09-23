@@ -29,6 +29,7 @@ void AOceanManager::SpawnOceanGrid()
 {
     TArray<TArray<AOceanBody*>> OceanGrid2D;
     OceanGrid2D.SetNum(GridSize);
+    OceanGrid1D.SetNum(GridSize * GridSize);
     FVector GridOrigin = GetActorLocation();
 
     for (int32 Row = 0; Row < GridSize; ++Row)
@@ -42,6 +43,7 @@ void AOceanManager::SpawnOceanGrid()
             if (SpawnedPlane)
             {
                 OceanGrid2D[Row][Col] = SpawnedPlane;
+                OceanGrid1D[Row * GridSize + Col] = SpawnedPlane;
             }
         }
     }

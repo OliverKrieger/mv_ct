@@ -31,6 +31,9 @@ public:
 
 	TSubclassOf<AActor> OceanBodyClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Environment")
+	TArray<AOceanBody*> OceanGrid1D;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
